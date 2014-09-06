@@ -1,0 +1,31 @@
+{
+    "name": "ecommit/amqp-bundle",
+    "description": "EcommitAmqpBundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hubert Lecorche",
+            "email": "contact@e-commit.fr"
+        }
+    ],
+    "require": {
+        "ext-xmlrpc": "*",
+        "ext-amqp": "*",
+        "symfony/framework-bundle": ">=2.5.2, <2.6",
+        "symfony/twig-bundle": "*",
+        "doctrine/doctrine-bundle": "*",
+        "psr/log": "*",
+        "mondalaci/supervisor-client": "dev-master",
+        "swiftmailer/swiftmailer": "*"
+    },
+    "autoload": {
+        "psr-0": { "Ecommit\\AmqpBundle": "" }
+    },
+    "target-dir": "Ecommit/AmqpBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}

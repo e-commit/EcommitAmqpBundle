@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="ecommit_amqp.broker.class">Ecommit\AmqpBundle\Amqp\Broker</parameter>
+        <parameter key="ecommit_amqp.service_manager.class">Ecommit\AmqpBundle\Manager\ServiceManager</parameter>
+        <parameter key="ecommit_amqp.supervisor.class">SupervisorClient\SupervisorClient</parameter>
+    </parameters>
+
+    <services>
+        <service id="ecommit_amqp.broker" class="%ecommit_amqp.broker.class%">
+            <argument>%ecommit_amqp.rabbitmq.login%</argument>
+            <argument>%ecommit_amqp.rabbitmq.password%</argument>
+            <argument>%ecommit_amqp.rabbitmq.host%</argument>
+            <argument>%ecommit_amqp.rabbitmq.port%</argument>
+            <argument>%ecommit_amqp.rabbitmq.vhost%</argument>
+        </service>
+
+        <service id="ecommit_amqp.service_manager" class="%ecommit_amqp.service_manager.class%">
+            <argument>%ecommit_amqp.admin_mail%</argument>
+            <argument type="service" id="ecommit_amqp.broker" />
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="logger" />
+            <argument type="service" id="mailer" />
+            <argument type="service" id="swiftmailer.transport.real" />
+            <argument>%ecommit_amqp.sender%</argument>
+            <argument type="service" id="templating" />
+            <argument type="service" id ="ecommit_amqp.supervisor" />
+            <argument>%ecommit_amqp.application_name%</argument>
+            <argument>%ecommit_amqp.error_template%</argument>
+        </service>
+
+        <service id="ecommit_amqp.supervisor" class="%ecommit_amqp.supervisor.class%">
+            <argument>%ecommit_amqp.supervisor.host%</argument>
+            <argument>%ecommit_amqp.supervisor.port%</argument>
+            <argument>3600</argument>
+            <argument>%ecommit_amqp.supervisor.login%</argument>
+            <argument>%ecommit_amqp.supervisor.password%</argument>
+        </service>
+    </services>
+</container>
