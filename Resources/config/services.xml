@@ -36,9 +36,13 @@
         <service id="ecommit_amqp.supervisor" class="%ecommit_amqp.supervisor.class%">
             <argument>%ecommit_amqp.supervisor.host%</argument>
             <argument>%ecommit_amqp.supervisor.port%</argument>
-            <argument>3600</argument>
-            <argument>%ecommit_amqp.supervisor.login%</argument>
-            <argument>%ecommit_amqp.supervisor.password%</argument>
+            <call method="setTimeout">
+                <argument>3600</argument>
+            </call>
+            <call method="setAuth">
+                <argument>%ecommit_amqp.supervisor.login%</argument>
+                <argument>%ecommit_amqp.supervisor.password%</argument>
+            </call>
         </service>
     </services>
 </container>
