@@ -12,7 +12,7 @@
     "require": {
         "ext-xmlrpc": "*",
         "ext-amqp": "*",
-        "symfony/framework-bundle": ">=2.5.2, <2.6",
+        "symfony/framework-bundle": ">=2.5.2, <2.7",
         "symfony/twig-bundle": "*",
         "doctrine/doctrine-bundle": "*",
         "psr/log": "*",
