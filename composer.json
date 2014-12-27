@@ -10,13 +10,13 @@
         }
     ],
     "require": {
-        "ext-xmlrpc": "*",
         "ext-amqp": "*",
         "symfony/framework-bundle": ">=2.5.2, <2.7",
         "symfony/twig-bundle": "*",
         "doctrine/doctrine-bundle": "*",
         "psr/log": "*",
-        "mondalaci/supervisor-client": "dev-master",
+        "indigophp/supervisor": "2.0.*",
+        "zendframework/zend-xmlrpc": "~2.3.0,>=2.3.3",
         "swiftmailer/swiftmailer": "*"
     },
     "autoload": {

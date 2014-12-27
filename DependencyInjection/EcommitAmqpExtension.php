@@ -31,8 +31,13 @@ class EcommitAmqpExtension extends Extension
         $container->setParameter('ecommit_amqp.rabbitmq.login', $config['rabbitmq']['login']);
         $container->setParameter('ecommit_amqp.rabbitmq.password', $config['rabbitmq']['password']);
 
-        $container->setParameter('ecommit_amqp.supervisor.host', $config['supervisor']['host']);
-        $container->setParameter('ecommit_amqp.supervisor.port', $config['supervisor']['port']);
+        //Define URL
+        $supervisorUrl = $config['supervisor']['host'].':'.$config['supervisor']['port'].'/RPC2';
+        if (!preg_match('/^http:\/\//', $supervisorUrl)) {
+            $supervisorUrl = 'http://'.$supervisorUrl;
+        }
+
+        $container->setParameter('ecommit_amqp.supervisor.url', $supervisorUrl);
         $container->setParameter('ecommit_amqp.supervisor.login', $config['supervisor']['login']);
         $container->setParameter('ecommit_amqp.supervisor.password', $config['supervisor']['password']);
 

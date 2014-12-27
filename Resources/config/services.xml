@@ -4,14 +4,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="ecommit_amqp.broker.class">Ecommit\AmqpBundle\Amqp\Broker</parameter>
-        <parameter key="ecommit_amqp.service_manager.class">Ecommit\AmqpBundle\Manager\ServiceManager</parameter>
-        <parameter key="ecommit_amqp.supervisor.class">SupervisorClient\SupervisorClient</parameter>
-    </parameters>
-
     <services>
-        <service id="ecommit_amqp.broker" class="%ecommit_amqp.broker.class%">
+        <service id="ecommit_amqp.broker" class="Ecommit\AmqpBundle\Amqp\Broker">
             <argument>%ecommit_amqp.rabbitmq.login%</argument>
             <argument>%ecommit_amqp.rabbitmq.password%</argument>
             <argument>%ecommit_amqp.rabbitmq.host%</argument>
@@ -19,7 +13,7 @@
             <argument>%ecommit_amqp.rabbitmq.vhost%</argument>
         </service>
 
-        <service id="ecommit_amqp.service_manager" class="%ecommit_amqp.service_manager.class%">
+        <service id="ecommit_amqp.service_manager" class="Ecommit\AmqpBundle\Manager\ServiceManager">
             <argument>%ecommit_amqp.admin_mail%</argument>
             <argument type="service" id="ecommit_amqp.broker" />
             <argument type="service" id="doctrine" />
@@ -33,16 +27,25 @@
             <argument>%ecommit_amqp.error_template%</argument>
         </service>
 
-        <service id="ecommit_amqp.supervisor" class="%ecommit_amqp.supervisor.class%">
-            <argument>%ecommit_amqp.supervisor.host%</argument>
-            <argument>%ecommit_amqp.supervisor.port%</argument>
-            <call method="setTimeout">
-                <argument>3600</argument>
-            </call>
-            <call method="setAuth">
+        <service id="ecommit_amqp.client" class="Zend\XmlRpc\Client">
+            <argument>%ecommit_amqp.supervisor.url%</argument>
+            <call method="getHttpClient()->setAuth">
                 <argument>%ecommit_amqp.supervisor.login%</argument>
                 <argument>%ecommit_amqp.supervisor.password%</argument>
             </call>
+            <call method="getHttpClient()->setOptions">
+                <argument type="collection">
+                    <argument key="timeout">3600</argument>
+                </argument>
+            </call>
+        </service>
+
+        <service id="ecommit_amqp.connector" class="Indigo\Supervisor\Connector\ZendConnector">
+            <argument type="service" id="ecommit_amqp.client" />
+        </service>
+
+        <service id="ecommit_amqp.supervisor" class="Indigo\Supervisor\Supervisor">
+            <argument type="service" id="ecommit_amqp.connector" />
         </service>
     </services>
 </container>
