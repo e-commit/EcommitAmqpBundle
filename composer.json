@@ -15,8 +15,9 @@
         "symfony/twig-bundle": "*",
         "doctrine/doctrine-bundle": "*",
         "psr/log": "*",
-        "indigophp/supervisor": "2.0.*",
-        "zendframework/zend-xmlrpc": "~2.3.0,>=2.3.3",
+        "supervisorphp/supervisor": "3.0.*",
+        "lstrojny/fxmlrpc": "0.9.*",
+        "guzzlehttp/guzzle": "5.*",
         "swiftmailer/swiftmailer": "*"
     },
     "autoload": {

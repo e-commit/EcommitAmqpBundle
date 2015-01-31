@@ -13,7 +13,7 @@ namespace Ecommit\AmqpBundle\Manager;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Ecommit\AmqpBundle\Amqp\Broker;
 use Psr\Log\LoggerInterface;
-use SupervisorClient\SupervisorClient;
+use Supervisor\Supervisor;
 use Swift_Mailer;
 use Swift_Transport_MailTransport;
 use Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine;
@@ -51,7 +51,7 @@ class ServiceManager
     protected $twig;
 
     /**
-     * @var SupervisorClient
+     * @var Supervisor
      */
     protected $supervisorClient;
 
@@ -143,7 +143,7 @@ class ServiceManager
     }
 
     /**
-     * @return SupervisorClient
+     * @return Supervisor
      */
     public function getSupervisorClient()
     {
@@ -151,7 +151,7 @@ class ServiceManager
     }
 
     /**
-     * @param SupervisorClient $supervisorClient
+     * @param Supervisor $supervisorClient
      */
     public function setSupervisorClient($supervisorClient)
     {

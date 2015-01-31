@@ -27,25 +27,11 @@
             <argument>%ecommit_amqp.error_template%</argument>
         </service>
 
-        <service id="ecommit_amqp.client" class="Zend\XmlRpc\Client">
+        <service id="ecommit_amqp.supervisor" class="Supervisor\Supervisor">
+            <factory class="Ecommit\AmqpBundle\Manager\SupervisorFactory" method="createSupervisor" />
             <argument>%ecommit_amqp.supervisor.url%</argument>
-            <call method="getHttpClient()->setAuth">
-                <argument>%ecommit_amqp.supervisor.login%</argument>
-                <argument>%ecommit_amqp.supervisor.password%</argument>
-            </call>
-            <call method="getHttpClient()->setOptions">
-                <argument type="collection">
-                    <argument key="timeout">3600</argument>
-                </argument>
-            </call>
-        </service>
-
-        <service id="ecommit_amqp.connector" class="Indigo\Supervisor\Connector\ZendConnector">
-            <argument type="service" id="ecommit_amqp.client" />
-        </service>
-
-        <service id="ecommit_amqp.supervisor" class="Indigo\Supervisor\Supervisor">
-            <argument type="service" id="ecommit_amqp.connector" />
+            <argument>%ecommit_amqp.supervisor.login%</argument>
+            <argument>%ecommit_amqp.supervisor.password%</argument>
         </service>
     </services>
 </container>
