@@ -124,7 +124,7 @@ abstract class AbstractConsumer
 
             //Arret des taches
             try {
-                $this->serviceManager->getLogger()->info('Stop %s group', $this->getSupervisorName());
+                $this->serviceManager->getLogger()->info(\sprintf('Stop %s group', $this->getSupervisorName()));
                 $this->serviceManager->getSupervisorClient()->stopProcessGroup($this->getSupervisorName(), false); //false important pour ne pas attendre la fin: comme appel depuis lui meme
                 sleep(10);
             }
