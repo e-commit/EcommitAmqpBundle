@@ -10,11 +10,10 @@
 
 namespace Ecommit\AmqpBundle\Command;
 
-use Swift_Message;
-use Swift_Transport_SpoolTransport;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckCommand extends ContainerAwareCommand
@@ -24,11 +23,13 @@ class CheckCommand extends ContainerAwareCommand
         $this
             ->setName('amqp:check')
             ->setDescription('Check tasks')
-            ->addOption('send-mail', null, InputOption::VALUE_NONE, 'Send mail (or not)');
+            ->addOption('nagios', null, InputOption::VALUE_NONE, 'Suitable for using as a nagios NRPE command');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
+
         $countStopped = 0;
         $countStarted = 0;
 
@@ -43,47 +44,45 @@ class CheckCommand extends ContainerAwareCommand
                 if ($process['statename'] == 'RUNNING') {
                     //Processus en cours de fonctionnement
                     $countStarted++;
-                    $output->writeln(
-                        \sprintf(
-                            '<fg=green>%s - %s : %s (PID %s)</fg=green>',
-                            $process['group'],
-                            $process['name'],
-                            $process['statename'],
-                            $process['pid']
-                        )
-                    );
+                    if (!$input->getOption('nagios')) {
+                        $output->writeln(
+                            \sprintf(
+                                '<fg=green>%s - %s : %s (PID %s)</fg=green>',
+                                $process['group'],
+                                $process['name'],
+                                $process['statename'],
+                                $process['pid']
+                            )
+                        );
+                    }
                 } else {
                     $countStopped++;
-                    $output->writeln(
-                        \sprintf(
-                            '<fg=red>%s - %s : %s</fg=red>',
-                            $process['group'],
-                            $process['name'],
-                            $process['statename']
-                        )
-                    );
+                    if (!$input->getOption('nagios')) {
+                        $errOutput->writeln(
+                            \sprintf(
+                                '<fg=red>%s - %s : %s</fg=red>',
+                                $process['group'],
+                                $process['name'],
+                                $process['statename']
+                            )
+                        );
+                    }
                 }
             }
         }
 
-        if (($countStarted == 0 || $countStopped > 1) && $input->getOption('send-mail')) {
-            //Envoi mail
-            $message = Swift_Message::newInstance()
-                ->setFrom($this->getContainer()->getParameter('ecommit_amqp.sender'))
-                ->setSubject(sprintf('[%s] WARNING - Tasks disabled', $this->getContainer()->getParameter('ecommit_amqp.application_name')))
-                ->setBody(sprintf('[%s] WARNING - Tasks disabled', $this->getContainer()->getParameter('ecommit_amqp.application_name')))
-                ->setTo($this->getContainer()->getParameter('ecommit_amqp.admin_mail'));
-            $this->getContainer()->get('mailer')->send($message);
-            $this->flushQueueMails();
-        }
-    }
+        if ($countStarted == 0 || $countStopped > 1) {
+            if ($input->getOption('nagios')) {
+                $output->writeln(\sprintf('CRITICAL - Running tasks: %s Stopped tasks: %s', $countStarted, $countStopped));
+            }
 
-    protected function flushQueueMails()
-    {
-        $transport = $this->getContainer()->get('mailer')->getTransport();
-        if ($transport instanceof Swift_Transport_SpoolTransport) {
-            $spool = $transport->getSpool();
-            $spool->flushQueue($this->getContainer()->get('swiftmailer.transport.real'));
+            return 2;
         }
+
+        if ($input->getOption('nagios')) {
+            $output->writeln(\sprintf('OK - Running tasks: %s Stopped tasks: %s', $countStarted, $countStopped));
+        }
+
+        return 0;
     }
 }
