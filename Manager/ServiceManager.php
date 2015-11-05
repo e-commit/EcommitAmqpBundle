@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 use Supervisor\Supervisor;
 use Swift_Mailer;
 use Swift_Transport_MailTransport;
-use Symfony\Bundle\TwigBundle\Debug\TimedTwigEngine;
+use Symfony\Bundle\TwigBundle\TwigEngine;
 
 class ServiceManager
 {
@@ -46,7 +46,7 @@ class ServiceManager
     protected $mailerTransport;
 
     /**
-     * @var TimedTwigEngine
+     * @var TwigEngine
      */
     protected $twig;
 
@@ -135,7 +135,7 @@ class ServiceManager
     }
 
     /**
-     * @return TimedTwigEngine
+     * @return TwigEngine
      */
     public function getTwig()
     {
