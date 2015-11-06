@@ -11,7 +11,8 @@
 namespace Ecommit\AmqpBundle\Manager;
 
 use fXmlRpc\Client;
-use fXmlRpc\Transport\Guzzle4Bridge;
+use fXmlRpc\Transport\HttpAdapterTransport;
+use Ivory\HttpAdapter\Guzzle6HttpAdapter;
 use Supervisor\Connector\XmlRpc;
 use Supervisor\Supervisor;
 
@@ -25,13 +26,15 @@ class SupervisorFactory
      */
     public static function createSupervisor($url, $login, $password)
     {
+        $guzzleClient = new \GuzzleHttp\Client([
+            'auth' => [$login, $password],
+            'timeout' => 3600
+        ]);
+
         //Pass the url and the bridge to the XmlRpc Client
         $client = new Client(
             $url,
-            new Guzzle4Bridge(new \GuzzleHttp\Client(['defaults' => [
-                'auth' => [$login, $password],
-                'timeout' => 3600
-            ]]))
+            new HttpAdapterTransport(new Guzzle6HttpAdapter($guzzleClient))
         );
 
         //Pass the client to the connector

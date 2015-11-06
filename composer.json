@@ -16,8 +16,9 @@
         "doctrine/doctrine-bundle": "*",
         "psr/log": "*",
         "supervisorphp/supervisor": "3.0.*",
-        "lstrojny/fxmlrpc": "0.9.*",
-        "guzzlehttp/guzzle": "5.*",
+        "lstrojny/fxmlrpc": "0.10.*",
+        "guzzlehttp/guzzle": "6.*",
+        "egeloen/http-adapter": "0.8.*",
         "swiftmailer/swiftmailer": "*"
     },
     "autoload": {
