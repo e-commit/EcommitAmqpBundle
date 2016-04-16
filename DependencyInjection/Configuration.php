@@ -43,7 +43,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('sender')->isRequired()->end()
                 ->arrayNode('admin_mail')
-                    ->isRequired()
+                    ->defaultValue(array())
                     ->prototype('scalar')->end()
                 ->end()
                 ->scalarNode('attachment_mail')->defaultValue(null)->end()

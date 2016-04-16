@@ -109,17 +109,19 @@ abstract class AbstractConsumer
                     'message_exception' => $exceptionMessage
             ));
 
-            $message = Swift_Message::newInstance()
-                ->setFrom($this->serviceManager->getSender())
-                ->setSubject(\sprintf('[%s] Task error', $this->serviceManager->getApplicationName()))
-                ->setBody($body, 'text/html')
-                ->setTo($this->serviceManager->getAdminMail());
+            if (count($this->serviceManager->getAdminMail()) > 0) {
+                $message = Swift_Message::newInstance()
+                    ->setFrom($this->serviceManager->getSender())
+                    ->setSubject(\sprintf('[%s] Task error', $this->serviceManager->getApplicationName()))
+                    ->setBody($body, 'text/html')
+                    ->setTo($this->serviceManager->getAdminMail());
 
-            if ($this->serviceManager->getAttachmentMail()) {
-                $message->attach(Swift_Attachment::fromPath($this->serviceManager->getAttachmentMail()));
+                if ($this->serviceManager->getAttachmentMail()) {
+                    $message->attach(Swift_Attachment::fromPath($this->serviceManager->getAttachmentMail()));
+                }
+
+                $this->serviceManager->getMailer()->send($message);
             }
-
-            $this->serviceManager->getMailer()->send($message);
 
             //Log
             $this->serviceManager->getLogger()->error($exceptionMessage);
