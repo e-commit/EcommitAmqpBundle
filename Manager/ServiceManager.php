@@ -63,7 +63,9 @@ class ServiceManager
 
     protected $errorTemplate;
 
-    function __construct($adminMail, $broker, $doctrine, $logger, $mailer, $mailerTransport, $sender, $twig, $supervisorClient, $applicationName, $errorTemplate)
+    protected $attachmentMail;
+
+    function __construct($adminMail, $broker, $doctrine, $logger, $mailer, $mailerTransport, $sender, $twig, $supervisorClient, $applicationName, $errorTemplate, $attachmentMail)
     {
         $this->adminMail = $adminMail;
         $this->broker = $broker;
@@ -76,6 +78,7 @@ class ServiceManager
         $this->supervisorClient = $supervisorClient;
         $this->applicationName = $applicationName;
         $this->errorTemplate = $errorTemplate;
+        $this->attachmentMail = $attachmentMail;
     }
 
     /**
@@ -172,5 +175,13 @@ class ServiceManager
     public function getErrorTemplate()
     {
         return $this->errorTemplate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttachmentMail()
+    {
+        return $this->attachmentMail;
     }
 }

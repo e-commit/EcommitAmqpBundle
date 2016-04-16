@@ -12,6 +12,7 @@ namespace Ecommit\AmqpBundle\Amqp\Consumer;
 
 use Ecommit\AmqpBundle\Manager\ServiceManager;
 use Exception;
+use Swift_Attachment;
 use Swift_Message;
 use Swift_Transport_SpoolTransport;
 
@@ -113,6 +114,10 @@ abstract class AbstractConsumer
                 ->setSubject(\sprintf('[%s] Task error', $this->serviceManager->getApplicationName()))
                 ->setBody($body, 'text/html')
                 ->setTo($this->serviceManager->getAdminMail());
+
+            if ($this->serviceManager->getAttachmentMail()) {
+                $message->attach(Swift_Attachment::fromPath($this->serviceManager->getAttachmentMail()));
+            }
 
             $this->serviceManager->getMailer()->send($message);
 

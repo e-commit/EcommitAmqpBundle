@@ -25,6 +25,7 @@
             <argument type="service" id ="ecommit_amqp.supervisor" />
             <argument>%ecommit_amqp.application_name%</argument>
             <argument>%ecommit_amqp.error_template%</argument>
+            <argument>%ecommit_amqp.attachment_mail%</argument>
         </service>
 
         <service id="ecommit_amqp.supervisor" class="Supervisor\Supervisor">

@@ -46,6 +46,7 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->prototype('scalar')->end()
                 ->end()
+                ->scalarNode('attachment_mail')->defaultValue(null)->end()
                 ->scalarNode('application_name')->isRequired()->end()
                 ->scalarNode('error_template')->isRequired()->end()
             ->end()

@@ -43,6 +43,7 @@ class EcommitAmqpExtension extends Extension
 
         $container->setParameter('ecommit_amqp.sender', $config['sender']);
         $container->setParameter('ecommit_amqp.admin_mail', $config['admin_mail']);
+        $container->setParameter('ecommit_amqp.attachment_mail', $config['attachment_mail']);
         $container->setParameter('ecommit_amqp.application_name', $config['application_name']);
         $container->setParameter('ecommit_amqp.error_template', $config['error_template']);
     }
