@@ -31,10 +31,8 @@ class ManagerCommand extends ContainerAwareCommand
         $consumer = $input->getArgument('consumer');
         if ($consumer == 'all') {
             $consumers = $this->getContainer()->get('ecommit_amqp.broker')->getConsumersNames();
-        } elseif (in_array($consumer, $this->getContainer()->get('ecommit_amqp.broker')->getConsumersNames())) {
+        } elseif ($this->getContainer()->get('ecommit_amqp.broker')->getConsumer($consumer)) {
             $consumers = array($consumer);
-        } else {
-            $output->writeln('<error>Bad consumer name</error>');
         }
 
         $supervisorGroups = array();
