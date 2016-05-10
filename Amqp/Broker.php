@@ -11,6 +11,7 @@
 namespace Ecommit\AmqpBundle\Amqp;
 
 use Ecommit\AmqpBundle\Amqp\Consumer\AbstractConsumer;
+use Ecommit\AmqpBundle\Exception\ConsumerNotFoundException;
 use Exception;
 
 class Broker
@@ -47,7 +48,12 @@ class Broker
             return $this->consumers[$name];
         }
 
-        throw new Exception('Consumer non trouvé : '.$name);
+        $alternatives = $this->getConsumersNames();
+        $message = 'Consumer not found';
+        $message .= "\n\nDid you mean one of these?\n    ";
+        $message .= implode("\n    ", $alternatives);
+
+        throw new ConsumerNotFoundException($message, $alternatives);
     }
 
     public function getConsumersNames()
