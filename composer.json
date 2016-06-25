@@ -22,9 +22,8 @@
         "swiftmailer/swiftmailer": "*"
     },
     "autoload": {
-        "psr-0": { "Ecommit\\AmqpBundle": "" }
+        "psr-4": { "Ecommit\\AmqpBundle\\": "" }
     },
-    "target-dir": "Ecommit/AmqpBundle",
     "extra": {
         "branch-alias": {
             "dev-master": "2.4.x-dev"
