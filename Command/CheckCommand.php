@@ -71,7 +71,7 @@ class CheckCommand extends ContainerAwareCommand
             }
         }
 
-        if ($countStarted == 0 || $countStopped > 1) {
+        if ($countStarted == 0 || $countStopped > 0) {
             if ($input->getOption('nagios')) {
                 $output->writeln(\sprintf('CRITICAL - Running tasks: %s Stopped tasks: %s', $countStarted, $countStopped));
             }
