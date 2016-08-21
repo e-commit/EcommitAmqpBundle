@@ -65,7 +65,7 @@ class ServiceManager
 
     protected $attachmentMail;
 
-    function __construct($adminMail, $broker, $doctrine, $logger, $mailer, $mailerTransport, $sender, $twig, $supervisorClient, $applicationName, $errorTemplate, $attachmentMail)
+    public function __construct($adminMail, $broker, $doctrine, $logger, $mailer, $mailerTransport, $sender, $twig, $supervisorClient, $applicationName, $errorTemplate, $attachmentMail)
     {
         $this->adminMail = $adminMail;
         $this->broker = $broker;
