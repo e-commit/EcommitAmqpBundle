@@ -12,7 +12,6 @@ namespace Ecommit\AmqpBundle\Manager;
 
 use fXmlRpc\Client;
 use fXmlRpc\Transport\HttpAdapterTransport;
-use Ivory\HttpAdapter\Guzzle6HttpAdapter;
 use Supervisor\Connector\XmlRpc;
 use Supervisor\Supervisor;
 
@@ -34,7 +33,10 @@ class SupervisorFactory
         //Pass the url and the bridge to the XmlRpc Client
         $client = new Client(
             $url,
-            new HttpAdapterTransport(new Guzzle6HttpAdapter($guzzleClient))
+            new HttpAdapterTransport(
+                new \Http\Message\MessageFactory\GuzzleMessageFactory(),
+                new \Http\Adapter\Guzzle6\Client($guzzleClient)
+            )
         );
 
         //Pass the client to the connector
