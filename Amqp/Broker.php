@@ -17,6 +17,7 @@ use Exception;
 class Broker
 {
     protected $consumers;
+    protected $consumerNameByFqcn;
 
     protected $conn;
     protected $exchanges;
@@ -35,17 +36,20 @@ class Broker
         $this->exchanges = array();
         $this->queues = array();
         $this->consumers = array();
+        $this->consumerNameByFqcn = array();
     }
 
     public function addConsumer(AbstractConsumer $consumer)
     {
         $this->consumers[$consumer->getName()] = $consumer;
+        $this->consumerNameByFqcn[get_class($consumer)] = $consumer->getName();
     }
 
-    public function getConsumer($name)
+    public function getConsumer($consumerName)
     {
-        if (array_key_exists($name, $this->consumers)) {
-            return $this->consumers[$name];
+        $consumerName = $this->transformFqcnToName($consumerName);
+        if (array_key_exists($consumerName, $this->consumers)) {
+            return $this->consumers[$consumerName];
         }
 
         $alternatives = $this->getConsumersNames();
@@ -109,14 +113,14 @@ class Broker
         }
     }
 
-    protected function createExchange($name)
+    protected function createExchange($exchangeName)
     {
         if (!$this->conn->isConnected()) {
             throw new Exception('Can not create exchange if not connected.');
         }
 
         $exchange = new \AMQPExchange($this->channel);
-        $exchange->setName($name);
+        $exchange->setName($exchangeName);
         $exchange->setType(\AMQP_EX_TYPE_DIRECT);
         $exchange->setFlags(\AMQP_DURABLE);
         $exchange->declareExchange();
@@ -124,14 +128,14 @@ class Broker
         return $exchange;
     }
 
-    protected function createQueue($name, array $arguments = array())
+    protected function createQueue($queueName, array $arguments = array())
     {
         if (!$this->conn->isConnected()) {
             throw new Exception('Can not create queue if not connected.');
         }
 
         $queue = new \AMQPQueue($this->channel);
-        $queue->setName($name);
+        $queue->setName($queueName);
         $queue->setFlags(\AMQP_DURABLE);
         if ($arguments) {
             $queue->setArguments($arguments);
@@ -143,7 +147,17 @@ class Broker
 
     public function submit($queueName, $message)
     {
+        $queueName = $this->transformFqcnToName($queueName);
         $this->connect();
         $this->exchanges[$queueName]->publish($message, $queueName, \AMQP_MANDATORY, array('delivery_mode' => 2));
+    }
+
+    protected function transformFqcnToName($fqcn)
+    {
+        if (array_key_exists($fqcn, $this->consumerNameByFqcn)) {
+            return $this->consumerNameByFqcn[$fqcn];
+        }
+
+        return $fqcn;
     }
 }
