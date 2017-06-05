@@ -15,7 +15,7 @@ use Ecommit\AmqpBundle\Amqp\Broker;
 use Psr\Log\LoggerInterface;
 use Supervisor\Supervisor;
 use Swift_Mailer;
-use Swift_Transport_MailTransport;
+use Swift_Transport;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 
 class ServiceManager
@@ -41,7 +41,7 @@ class ServiceManager
     protected $mailer;
 
     /**
-     * @var Swift_Transport_MailTransport
+     * @var Swift_Transport
      */
     protected $mailerTransport;
 
@@ -122,7 +122,7 @@ class ServiceManager
     }
 
     /**
-     * @return Swift_Transport_MailTransport
+     * @return Swift_Transport
      */
     public function getMailerTransport()
     {
