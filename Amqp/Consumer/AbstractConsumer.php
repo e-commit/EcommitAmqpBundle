@@ -68,6 +68,9 @@ abstract class AbstractConsumer
                         $this->serviceManager->getDoctrine()->getConnection()->commit();
                     }
 
+                    //Envoi du spool de mail
+                    $this->flushQueueMails();
+
                     //ACK
                     $this->serviceManager->getBroker()->ack($this->getName(), $msg);
 
@@ -123,6 +126,12 @@ abstract class AbstractConsumer
             //Log
             $this->serviceManager->getLogger()->error($exceptionMessage);
 
+            //Envoi du spool mail
+            try {
+                $this->flushQueueMails();
+            } catch (\Exception $eMail) {
+            }
+
             //Arret des taches
             try {
                 $this->serviceManager->getLogger()->info(\sprintf('Stop %s group', $this->getSupervisorName()));
@@ -155,18 +164,15 @@ abstract class AbstractConsumer
         $this->serviceManager->getLogger()->info(\sprintf('Stop %s consumer', $this->getName()));
     }
 
-    /**
-     * @deprecated Deprecated since version 2.4.
-     */
     public function flushQueueMails()
     {
-        trigger_error('The "flushQueueMails" method is deprecated since version 2.4.', E_USER_DEPRECATED);
-
         $transport = $this->serviceManager->getMailer()->getTransport();
         if ($transport instanceof Swift_Transport_SpoolTransport) {
-            $this->serviceManager->getLogger()->info('Flush Queue Mail');
             $spool = $transport->getSpool();
-            $spool->flushQueue($this->serviceManager->getMailerTransport());
+            if ($spool instanceof \Swift_MemorySpool) {
+                $this->serviceManager->getLogger()->info('Flush Queue Mail');
+                $spool->flushQueue($this->serviceManager->getMailerTransport());
+            }
         }
     }
 
