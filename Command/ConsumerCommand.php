@@ -10,13 +10,26 @@
 
 namespace Ecommit\AmqpBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Ecommit\AmqpBundle\Amqp\Broker;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ConsumerCommand extends ContainerAwareCommand
+class ConsumerCommand extends Command
 {
+    /**
+     * @var Broker
+     */
+    protected $broker;
+
+    public function __construct(Broker $broker)
+    {
+        $this->broker = $broker;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -31,7 +44,7 @@ class ConsumerCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $daemon = $this->getContainer()->get('ecommit_amqp.broker')->getConsumer($input->getArgument('daemon'));
+        $daemon = $this->broker->getConsumer($input->getArgument('daemon'));
 
         pcntl_signal(
             SIGTERM,

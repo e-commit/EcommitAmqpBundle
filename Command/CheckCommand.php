@@ -10,14 +10,37 @@
 
 namespace Ecommit\AmqpBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Ecommit\AmqpBundle\Amqp\Broker;
+use Ecommit\AmqpBundle\Amqp\Supervisor;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CheckCommand extends ContainerAwareCommand
+class CheckCommand extends Command
 {
+    /**
+     * @var Broker
+     */
+    protected $broker;
+
+    /**
+     * @var Supervisor
+     */
+    protected $supervisor;
+
+    protected $amqpApplicationName;
+
+    public function __construct(Broker $broker, Supervisor $supervisor, $amqpApplicationName)
+    {
+        $this->broker = $broker;
+        $this->supervisor = $supervisor;
+        $this->amqpApplicationName = $amqpApplicationName;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -34,12 +57,11 @@ class CheckCommand extends ContainerAwareCommand
         $countStarted = 0;
 
         $supervisorGroups = array();
-        foreach ($this->getContainer()->get('ecommit_amqp.broker')->getConsumersNames() as $consumerName) {
-            $supervisorGroups[] =  sprintf('%s_%s', $this->getContainer()->getParameter('ecommit_amqp.application_name'), $consumerName);
+        foreach ($this->broker->getConsumersNames() as $consumerName) {
+            $supervisorGroups[] =  sprintf('%s_%s', $this->amqpApplicationName, $consumerName);
         }
 
-        $supervisor = $this->getContainer()->get('ecommit_amqp.supervisor');
-        foreach ($supervisor->getAllProcessInfo() as $process) {
+        foreach ($this->supervisor->getAllProcessInfo() as $process) {
             if (in_array($process['group'], $supervisorGroups)) {
                 if ($process['statename'] == 'RUNNING') {
                     //Processus en cours de fonctionnement

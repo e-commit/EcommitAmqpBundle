@@ -10,6 +10,8 @@
 
 namespace Ecommit\AmqpBundle\DependencyInjection\Compiler;
 
+use Ecommit\AmqpBundle\Amqp\Broker;
+use Ecommit\AmqpBundle\Manager\ServiceManager;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -19,11 +21,11 @@ class ConsumerCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $broker = $container->getDefinition(
-            'ecommit_amqp.broker'
+            Broker::class
         );
 
         $serviceManager = $container->getDefinition(
-            'ecommit_amqp.service_manager'
+            ServiceManager::class
         );
 
         $taggedServices = $container->findTaggedServiceIds(

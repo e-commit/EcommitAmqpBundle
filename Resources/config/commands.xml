@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Ecommit\AmqpBundle\Command\CheckCommand" class="Ecommit\AmqpBundle\Command\CheckCommand">
+            <argument type="service" id="Ecommit\AmqpBundle\Amqp\Broker" />
+            <argument type="service" id="Ecommit\AmqpBundle\Amqp\Supervisor" />
+            <argument>%ecommit_amqp.application_name%</argument>
+            <tag name="console.command"/>
+        </service>
+
+        <service id="Ecommit\AmqpBundle\Command\ConsumerCommand" class="Ecommit\AmqpBundle\Command\ConsumerCommand">
+            <argument type="service" id="Ecommit\AmqpBundle\Amqp\Broker" />
+            <tag name="console.command"/>
+        </service>
+
+        <service id="Ecommit\AmqpBundle\Command\ManagerCommand" class="Ecommit\AmqpBundle\Command\ManagerCommand">
+            <argument type="service" id="Ecommit\AmqpBundle\Amqp\Broker" />
+            <argument type="service" id="Ecommit\AmqpBundle\Amqp\Supervisor" />
+            <argument>%ecommit_amqp.application_name%</argument>
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>

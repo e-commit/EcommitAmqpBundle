@@ -10,13 +10,36 @@
 
 namespace Ecommit\AmqpBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Ecommit\AmqpBundle\Amqp\Broker;
+use Ecommit\AmqpBundle\Amqp\Supervisor;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ManagerCommand extends ContainerAwareCommand
+class ManagerCommand extends Command
 {
+    /**
+     * @var Broker
+     */
+    protected $broker;
+
+    /**
+     * @var Supervisor
+     */
+    protected $supervisor;
+
+    protected $amqpApplicationName;
+
+    public function __construct(Broker $broker, Supervisor $supervisor, $amqpApplicationName)
+    {
+        $this->broker = $broker;
+        $this->supervisor = $supervisor;
+        $this->amqpApplicationName = $amqpApplicationName;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -30,14 +53,14 @@ class ManagerCommand extends ContainerAwareCommand
     {
         $consumer = $input->getArgument('consumer');
         if ($consumer == 'all') {
-            $consumers = $this->getContainer()->get('ecommit_amqp.broker')->getConsumersNames();
-        } elseif ($this->getContainer()->get('ecommit_amqp.broker')->getConsumer($consumer)) {
+            $consumers = $this->broker->getConsumersNames();
+        } elseif ($this->broker->getConsumer($consumer)) {
             $consumers = array($consumer);
         }
 
         $supervisorGroups = array();
         foreach ($consumers as $consumerName) {
-            $supervisorGroups[] =  sprintf('%s_%s', $this->getContainer()->getParameter('ecommit_amqp.application_name'), $consumerName);
+            $supervisorGroups[] =  sprintf('%s_%s', $this->amqpApplicationName, $consumerName);
         }
 
         switch ($input->getArgument('action')) {
@@ -59,28 +82,25 @@ class ManagerCommand extends ContainerAwareCommand
 
     private function startAction($supervisorGroups, OutputInterface $output)
     {
-        $supervisor = $this->getContainer()->get('ecommit_amqp.supervisor');
         foreach ($supervisorGroups as $supervisorGroup) {
             $output->writeln(\sprintf('Starting %s group', $supervisorGroup));
-            $supervisor->startProcessGroup($supervisorGroup, true);
+            $this->supervisor->startProcessGroup($supervisorGroup, true);
             $output->writeln(\sprintf('%s group is started', $supervisorGroup));
         }
     }
 
     private function stopAction($supervisorGroups, OutputInterface $output)
     {
-        $supervisor = $this->getContainer()->get('ecommit_amqp.supervisor');
         foreach ($supervisorGroups as $supervisorGroup) {
             $output->writeln(\sprintf('Stopping %s group', $supervisorGroup));
-            $supervisor->stopProcessGroup($supervisorGroup, true);
+            $this->supervisor->stopProcessGroup($supervisorGroup, true);
             $output->writeln(\sprintf('%s group is stopped', $supervisorGroup));
         }
     }
 
     private function displayStatusAction($supervisorGroups, OutputInterface $output)
     {
-        $supervisor = $this->getContainer()->get('ecommit_amqp.supervisor');
-        foreach ($supervisor->getAllProcessInfo() as $process) {
+        foreach ($this->supervisor->getAllProcessInfo() as $process) {
             if (in_array($process['group'], $supervisorGroups)) {
                 $output->writeln(
                     \sprintf(

@@ -12,8 +12,8 @@ namespace Ecommit\AmqpBundle\Manager;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Ecommit\AmqpBundle\Amqp\Broker;
+use Ecommit\AmqpBundle\Amqp\Supervisor;
 use Psr\Log\LoggerInterface;
-use Supervisor\Supervisor;
 use Swift_Mailer;
 use Swift_Transport;
 use Symfony\Bundle\TwigBundle\TwigEngine;

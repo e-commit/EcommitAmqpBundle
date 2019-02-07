@@ -10,10 +10,10 @@
 
 namespace Ecommit\AmqpBundle\Manager;
 
+use Ecommit\AmqpBundle\Amqp\Supervisor;
 use fXmlRpc\Client;
 use fXmlRpc\Transport\HttpAdapterTransport;
 use Supervisor\Connector\XmlRpc;
-use Supervisor\Supervisor;
 
 class SupervisorFactory
 {
