@@ -23,7 +23,7 @@
         "symfony/http-kernel": "^4.2",
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/templating": "~4.2",
-        "symfony/twig-bundle": "^3.2",
+        "symfony/twig-bundle": "^4.2",
         "psr/log": "~1.0"
     },
     "autoload": {
