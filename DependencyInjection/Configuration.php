@@ -17,8 +17,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ecommit_amqp');
+        $treeBuilder = new TreeBuilder('ecommit_amqp');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
