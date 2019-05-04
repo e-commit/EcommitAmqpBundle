@@ -110,7 +110,7 @@ abstract class AbstractConsumer
             ));
 
             if (count($this->serviceManager->getAdminMail()) > 0) {
-                $message = Swift_Message::newInstance()
+                $message = (new \Swift_Message())
                     ->setFrom($this->serviceManager->getSender())
                     ->setSubject(\sprintf('[%s] Task error', $this->serviceManager->getApplicationName()))
                     ->setBody($body, 'text/html')
