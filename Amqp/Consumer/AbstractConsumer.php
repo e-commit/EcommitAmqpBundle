@@ -43,6 +43,7 @@ abstract class AbstractConsumer
         $this->stopped = false;
         $this->time = time();
 
+        $msg = null;
         try {
             $this->serviceManager->getBroker()->connect();
 
@@ -77,6 +78,8 @@ abstract class AbstractConsumer
 
                     $this->serviceManager->getDoctrine()->getManager()->clear(); // Detaches all objects from Doctrine!
 
+                    $msg = null;
+
                     pcntl_signal_dispatch();
 
                     if ($this->stopped) {
@@ -105,9 +108,11 @@ abstract class AbstractConsumer
             }
 
             //Envoi mail à l'admin
-            $body = $this->serviceManager->getTwig()->render($this->serviceManager->getErrorTemplate(), array(
-                    'message_exception' => $exceptionMessage
-            ));
+            $body = $this->serviceManager->getTwig()->render($this->getErrorTemplate(), array_merge($this->getErrorTemplateParameters($e, $msg), array(
+                'message_exception' => $exceptionMessage,
+                'message_amqp' => $msg,
+                'consumer_name' => $this->getName(),
+            )));
 
             if (count($this->serviceManager->getAdminMail()) > 0) {
                 $message = (new \Swift_Message())
@@ -116,8 +121,8 @@ abstract class AbstractConsumer
                     ->setBody($body, 'text/html')
                     ->setTo($this->serviceManager->getAdminMail());
 
-                if ($this->serviceManager->getAttachmentMail()) {
-                    $message->attach(Swift_Attachment::fromPath($this->serviceManager->getAttachmentMail()));
+                if ($this->getAttachmentMail()) {
+                    $message->attach(Swift_Attachment::fromPath($this->getAttachmentMail()));
                 }
 
                 $this->serviceManager->getMailer()->send($message);
@@ -188,6 +193,30 @@ abstract class AbstractConsumer
     public function getSupervisorName()
     {
         return $this->serviceManager->getApplicationName().'_'.$this->getName();
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getErrorTemplate()
+    {
+        return $this->serviceManager->getErrorTemplate();
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getAttachmentMail()
+    {
+        return $this->serviceManager->getAttachmentMail();
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getErrorTemplateParameters(\Exception $exception, $amqpMessage)
+    {
+        return array();
     }
 
     abstract public function consume(\AMQPEnvelope $msg);
