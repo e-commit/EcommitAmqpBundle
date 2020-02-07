@@ -10,13 +10,13 @@
 
 namespace Ecommit\AmqpBundle\Manager;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Ecommit\AmqpBundle\Amqp\Broker;
 use Ecommit\AmqpBundle\Amqp\Supervisor;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Swift_Transport;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Twig\Environment;
 
 class ServiceManager
 {
@@ -31,7 +31,7 @@ class ServiceManager
     protected $logger;
 
     /**
-     * @var Registry
+     * @var ManagerRegistry
      */
     protected $doctrine;
 
@@ -46,7 +46,7 @@ class ServiceManager
     protected $mailerTransport;
 
     /**
-     * @var TwigEngine
+     * @var Environment
      */
     protected $twig;
 
@@ -98,7 +98,7 @@ class ServiceManager
     }
 
     /**
-     * @return Registry
+     * @return ManagerRegistry
      */
     public function getDoctrine()
     {
@@ -138,7 +138,7 @@ class ServiceManager
     }
 
     /**
-     * @return TwigEngine
+     * @return Environment
      */
     public function getTwig()
     {

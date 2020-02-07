@@ -17,12 +17,12 @@
         <service id="Ecommit\AmqpBundle\Manager\ServiceManager" class="Ecommit\AmqpBundle\Manager\ServiceManager">
             <argument>%ecommit_amqp.admin_mail%</argument>
             <argument type="service" id="Ecommit\AmqpBundle\Amqp\Broker" />
-            <argument type="service" id="Symfony\Bridge\Doctrine\RegistryInterface" />
+            <argument type="service" id="Doctrine\Persistence\ManagerRegistry" />
             <argument type="service" id="Psr\Log\LoggerInterface" />
             <argument type="service" id="Swift_Mailer" />
             <argument type="service" id="swiftmailer.transport.real" />
             <argument>%ecommit_amqp.sender%</argument>
-            <argument type="service" id="templating" />
+            <argument type="service" id="Twig\Environment" />
             <argument type="service" id ="Ecommit\AmqpBundle\Amqp\Supervisor" />
             <argument>%ecommit_amqp.application_name%</argument>
             <argument>%ecommit_amqp.error_template%</argument>

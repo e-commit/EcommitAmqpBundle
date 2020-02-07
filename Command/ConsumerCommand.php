@@ -60,5 +60,7 @@ class ConsumerCommand extends Command
         );
 
         $daemon->run();
+
+        return 0;
     }
 }

@@ -76,8 +76,10 @@ class ManagerCommand extends Command
             default:
                 $output->writeln('<error>Bad action</error>');
 
-                return;
+                return -1;
         }
+
+        return 0;
     }
 
     private function startAction($supervisorGroups, OutputInterface $output)
