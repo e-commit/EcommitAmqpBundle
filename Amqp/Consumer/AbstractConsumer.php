@@ -59,7 +59,7 @@ abstract class AbstractConsumer
 
                 $this->serviceManager->getBroker()->connect();
 
-                while (false !== $msg = $this->serviceManager->getBroker()->consume($this->getName())) {
+                while ($msg = $this->serviceManager->getBroker()->consume($this->getName())) {
 
                     $this->consume($msg);
 
